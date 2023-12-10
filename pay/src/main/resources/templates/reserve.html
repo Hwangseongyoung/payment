@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>룸 예약하기</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+
+</head>
+<body>
+  <h1>룸 예약하기</h1>
+  <form>
+    <ul>
+      <li>
+        <label>방 이름 : </label>
+        <input type="text" name="roomName" th:value="${roomList.roomName}" required />
+      </li>
+      <li>
+        <label>방 가격 : </label>
+        <input type="text" name="roomPrice" th:value="${roomList.roomPrice}" required />
+      </li>
+      <li>
+        <label>체크인 : </label>
+        <input type="text" name="checkin" th:value="${reserveRequest.checkin}" required />
+      </li>
+      <li>
+        <label>체크아웃 : </label>
+        <input type="text" name="checkout" th:value="${reserveRequest.checkout}" required />
+      </li>
+      <li>
+        <label>박 : </label>
+        <input type="text" name="dayNight" th:value="${reserveRequest.dayNight}" required />
+      </li>
+      <li>
+        <label>인원 : </label>
+        <input type="text" name="person" th:value="${reserveRequest.person}" required />
+      </li>
+      <li>
+        <label>결제금액 : </label>
+        <input type="text" name="payMoney" required />
+      </li>
+      <li>
+        <label>예약자 이름 : </label>
+        <input type="text" name="reserveName" required />
+      </li>
+      <li>
+        <label>예약자 이메일 : </label>
+        <input type="text" name="reserveEmail" required />
+      </li>
+      <li>
+        <label>예약자 전화번호 : </label>
+        <input type="text" name="reserveTell" required />
+      </li>
+      <li>
+        <button type="button" id="payment_btn" onclick="settlement()">결제하기</button>
+      </li>
+    </ul>
+  </form>
+    
+  <script>
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0");
+    let day = String(date.getDate()).padStart(2, "0");
+
+    let btn = document.querySelector("#payment_btn");
+    let roomName = document.querySelector("input[name=roomName]");
+    let roomPrice = document.querySelector("input[name=roomPrice]");
+    let checkin = document.querySelector("input[name=checkin]");
+    let checkout = document.querySelector("input[name=checkout]");
+    let dayNight = document.querySelector("input[name=dayNight]");
+    let person = document.querySelector("input[name=person]");
+    let payMoney = document.querySelector("input[name=payMoney]");
+    let reserveName = document.querySelector("input[name=reserveName]");
+    let reserveEmail = document.querySelector("input[name=reserveEmail]");
+    let reserveTell = document.querySelector("input[name=reserveTell]");
+    let orderNum = year + month + day;
+
+    for(let i=0;i<10;i++) {
+      orderNum += Math.floor(Math.random() * 8);
+    }
+    
+    // let obj = {
+    //   pg: "kakaopay.TC0ONETIME",
+    //   pay_method: "card",
+    //   merchant_uid: orderNum,
+    //   name: roomName.value,
+    //   amount: payMoney.value,
+    //   buyer_email: reserveEmail.value,
+    //   buyer_name: reserveName.value,
+    //   buyer_tel: reserveTell.value
+    // };
+
+    // let obj = {
+    //   pg: "kakaopay.TC0ONETIME",
+    //   pay_method: "card",
+    //   merchant_uid: orderNum,
+    //   name: "A",
+    //   amount: 300000,
+    //   buyer_email: "email@email.com",
+    //   buyer_name: "김전진",
+    //   buyer_tel: "01012345678"
+    // };
+
+    
+    // function request_pay() {
+    //   var IMP = window.IMP;
+    //   IMP.init("imp61615502");
+    //   IMP.request_pay({
+    //     pg: "kakaopay.TC0ONETIME",
+    //     pay_method: "card",
+    //     merchant_uid: orderNum,
+    //     name: roomName.value,
+    //     amount: payMoney.value,
+    //     buyer_email: reserveEmail.value,
+    //     buyer_name: reserveName.value,
+    //     buyer_tel: reserveTell.value,
+    //     function(rsp) {
+    //       if(rsp.success) {
+    //         alert("성공");
+    //       }else {
+    //         alert("실패");
+    //       }
+    //     }
+    //   });
+    // }
+
+    
+    function settlement() {
+      $.ajax({
+        type: "post",
+        url: "/requestSettle",
+        dataType: "json",
+        data: {
+          orderNum: orderNum,
+          reserveName: reserveName.value,
+          reserveEmail: reserveEmail.value,
+          reserveTell: reserveTell.value,
+          payMoney: payMoney.value,
+          roomName: roomName.value
+        },
+        success: function payment(result) {
+          let obj = {
+            pg: "kakaopay.TC0ONETIME",
+            pay_method: "card",
+            merchant_uid: result.rs.orderNum,
+            name: "개비리길펜션 "+result.rs.roomName+"동",
+            amount: result.rs.payMoney,
+            buyer_email: result.rs.reserveEmail,
+            buyer_name: result.rs.reserveName,
+            buyer_tel: result.rs.reserveTell
+          }
+
+          IMP.init("imp61615502");
+          IMP.request_pay(obj, function(rsp) {
+              if(rsp.success) {
+                $.ajax({
+                  type: "post",
+                  url: "/settlement",
+                  dataType: "json",
+                  data: {
+                    orderNum: orderNum,
+                    checkin: checkin.value,
+                    checkout: checkout.value,
+                    person: person.value,
+                    reserveEmail: reserveEmail.value,
+                    reserveName: reserveName.value,
+                    reserveTell: reserveTell.value,
+                    payMoney: payMoney.value,
+                    roomName: roomName.value
+                  },
+                  success: function(result) {
+                    if(result.msg == "success"){
+                      location.href = "/reserveList";
+                    }
+                  }
+                });
+              }else {
+                alert("실패");
+              }
+            });
+        }
+      });
+    }
+  </script>
+</body>
+</html>

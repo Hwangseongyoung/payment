@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>룸 등록</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+</head>
+<body>
+  <h1>룸 등록</h1>
+  <form action="/roomAdd" method="post">
+    <ul>
+      <li>
+        <label>방 이름 : </label>
+        <input type="text" name="roomName" required />
+      </li>
+      <li>
+        <label>방 가격 : </label>
+        <input type="text" name="roomPrice" required />
+      </li>
+      <li>
+        <label>최대인원 : </label>
+        <input type="text" name="roomMaxPerson" required />
+      </li>
+      <li>
+        <label>최소인원 : </label>
+        <input type="text" name="roomMinPerson" required />
+      </li>
+      <li>
+        <input type="submit" value="등록하기" />
+      </li>
+    </ul>
+  </form>
+    
+  <script>
+  
+  </script>
+</body>
+</html>

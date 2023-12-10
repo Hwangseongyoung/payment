@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>룸 등록</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+</head>
+<body>
+  <h1>예약 내역</h1>
+  <div th:each="rl: ${reserveList}">
+    <ul>
+      <li>
+        예약번호 : [[${rl.orderNum}]]
+      </li>
+      <li>
+        방 이름 : 개비리길펜션 [[${rl.roomName}]]동
+      </li>
+      <li>
+        체크인 : [[${rl.checkin}]]
+      </li>
+      <li>
+        체크아웃 : [[${rl.checkout}]]
+      </li>
+      <li>
+        인원 : [[${rl.person}]]
+      </li>
+      <li>
+        결제상태 : 
+        <th:inline_block th:if="${rl.settlementState eq 1}">
+          결제완료
+        </th:inline_block>
+        <th:inline_block th:unless="${rl.settlementState eq 1}">
+          결제취소
+        </th:inline_block>
+      </li>
+      <li>
+        <button>상세보기</button>
+        <button>결제취소</button>
+      </li>
+    </ul>
+  </div>
+    
+  <script>
+  
+  </script>
+</body>
+</html>

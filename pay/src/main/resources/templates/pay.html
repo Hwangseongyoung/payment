@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>결제 연습</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+</head>
+<body>
+  <h1>결제하기</h1>
+
+  <button id="payment_btn">결제하기</button>
+
+
+  <script>
+    let btn = document.querySelector("#payment_btn");
+
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      payment();
+    });
+
+
+    let obj = {
+      pg: "kakaopay.TC0ONETIME",
+      pay_method: "card",
+      merchant_uid: "iamport_test_123",
+      name: "A동",
+      amount: 300000,
+      buyer_email: "email@email.com",
+      buyer_name: "김전진",
+      buyer_tel: "01012345678"
+    };
+
+    function payment(data) {
+      IMP.init("imp61615502");
+      IMP.request_pay(obj, function(rsp) {
+        if(rsp.success) {
+          alert("완료");
+        }else {
+          alert("실패");
+        }
+      });
+    }
+  </script>
+</body>
+</html>

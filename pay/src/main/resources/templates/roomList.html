@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>룸 리스트</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+</head>
+<body>
+  <h1>룸 리스트</h1>
+  <div>
+    <!-- <form action="/reserveRequest" method="post">
+      <ul>
+        <li>
+          <label>방 이름 : </label>
+          <input type="text" name="roomName" required />
+        </li>
+        <li>
+          <label>체크인 : </label>
+          <input type="text" name="checkin" required />
+        </li>
+        <li>
+          <label>체크아웃 : </label>
+          <input type="text" name="checkout" required />
+        </li>
+        <li>
+          <label>박 : </label>
+          <input type="text" name="dayNight" required />
+        </li>
+        <li>
+          <label>인원 : </label>
+          <input type="text" name="person" required />
+        </li>
+        <li>
+          <input type="submit" value="예약하기" />
+        </li>
+      </ul>
+    </form> -->
+  </div>
+    
+  <script>
+    let roomName = document.querySelector("input[name=roomName]");
+    let checkin = document.querySelector("input[name=checkin]");
+    let checkout = document.querySelector("input[name=checkout]");
+    let dayNight = document.querySelector("input[name=dayNight]");
+    let person = document.querySelector("input[name=person]");
+
+    $(function() {
+      $.ajax({
+        type:"get",
+        url: "/showRoomList",
+        dataType: "json",
+        success: function(result) {
+          let output = "";
+
+          result.roomList.forEach((r) => {
+            output += `<form action="/reserve" method="post">
+                        <ul>
+                          <li>
+                            <input type="hidden" name="roomNum" value="${r.roomNum}" />
+                          </li>
+                          <li>
+                            <label>방 이름 : </label>
+                            <input type="text" name="roomName" value="${r.roomName}" required />
+                          </li>
+                          <li>
+                            <label>방 가격 : </label>
+                            <input type="text" name="roomPrice" value="${r.roomPrice}" required />
+                          </li>
+                          <li>
+                            <label>체크인 : </label>
+                            <input type="text" name="checkin" required />
+                          </li>
+                          <li>
+                            <label>체크아웃 : </label>
+                            <input type="text" name="checkout" required />
+                          </li>
+                          <li>
+                            <label>박 : </label>
+                            <input type="text" name="dayNight" required />
+                          </li>
+                          <li>
+                            <label>인원 : </label>
+                            <input type="text" name="person" required />
+                          </li>
+                          <li>
+                            <input type="submit" value="예약하기" />
+                          </li>
+                        </ul>
+                      </form>`;
+          });
+          document.querySelector("div").innerHTML = output;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
